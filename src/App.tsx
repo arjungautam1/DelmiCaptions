@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Container, Row, Col, Nav, Card, Button, Form, InputGroup, Spinner, Badge, Alert } from 'react-bootstrap';
-import { MessageSquare, Wand2, Send, Paperclip, Upload, Sparkles, Brain, BookOpen, CreditCard, Users, Zap, Copy, Heart, Check, X, FileText } from 'lucide-react';
+import { MessageSquare, Wand2, Send, Paperclip, Upload, Sparkles, Bot, BookOpen, CreditCard, Users, Zap, Copy, Heart, Check, X, FileText } from 'lucide-react';
 import { useChat } from './hooks/useChat';
 import MessageBubble from './components/Chat/MessageBubble';
 import MediaUpload from './components/MediaUpload';
@@ -78,8 +78,17 @@ function App() {
       '𝟬', '𝟭', '𝟮', '𝟯', '𝟰', '𝟱', '𝟲', '𝟳', '𝟴', '𝟵'
     ]);
     
+    // First, clean up any JSON artifacts or extra formatting
+    let cleanedText = text
+      .replace(/^"caption":\s*"/, '')  // Remove leading "caption": "
+      .replace(/"$/, '')               // Remove trailing quote
+      .replace(/^["']|["']$/g, '')     // Remove any surrounding quotes
+      .replace(/\\n/g, '\n')           // Convert escaped newlines
+      .replace(/\\"/g, '"')            // Convert escaped quotes
+      .trim();
+    
     // Split text into words and process each word
-    return text.split(/(\s+)/).map(word => {
+    return cleanedText.split(/(\s+)/).map(word => {
       // Skip if it's just whitespace
       if (/^\s+$/.test(word)) return word;
       
@@ -270,24 +279,27 @@ Generate 3 different caption variations that:
 9. Use appropriate hashtags from the provided list
 10. Keep length similar to examples (typically 3-5 lines plus CTA)
 
-IMPORTANT: Return ONLY a valid JSON array in this exact format:
-[{"caption": "your first caption here"}, {"caption": "your second caption here"}, {"caption": "your third caption here"}]
-
-FORMATTING REQUIREMENTS:
-- Use actual line breaks (\n) in the JSON strings for proper formatting
-- Each caption should be 3-5 lines with proper line breaks
-- Include emojis and bold Unicode text as shown in examples
-- CRITICAL: Keep ALL letters in bold Unicode text CONSISTENT - no mixing of regular and bold characters
-- Use bold Unicode for: course names, company name, technical terms, key phrases
-- End with call-to-action and hashtags on separate lines
-- Ensure proper spacing and readability
-
-EXAMPLE CORRECT BOLD TEXT:
-✅ 𝗻𝗲𝘁𝘄𝗼𝗿𝗸 𝗰𝗮𝗯𝗹𝗶𝗻𝗴 (all letters consistent)
-✅ 𝗮𝗰𝗰𝗲𝘀𝘀 𝗰𝗼𝗻𝘁𝗿𝗼𝗹 (all letters consistent)
-❌ 𝗮𝗰𝗰𝗲𝘀𝘀 𝗰𝗼𝗻𝘁𝗿𝗼L (mixing regular L with bold text)
-
-Do not include any other text, formatting, numbering, or explanations. Just the clean JSON array with properly formatted captions that match the style examples exactly.`
+  IMPORTANT: Return ONLY a valid JSON array in this exact format:
+  [{"caption": "your first caption here"}, {"caption": "your second caption here"}, {"caption": "your third caption here"}]
+  
+  CRITICAL FORMATTING RULES:
+  - Return ONLY the JSON array, no additional text or explanations
+  - Use actual line breaks (\n) in the JSON strings for proper formatting
+  - Each caption should be 3-5 lines with proper line breaks
+  - Include emojis and bold Unicode text as shown in examples
+  - CRITICAL: Keep ALL letters in bold Unicode text CONSISTENT - no mixing of regular and bold characters
+  - Use bold Unicode for: course names, company name, technical terms, key phrases
+  - End with call-to-action and hashtags on separate lines
+  - Ensure proper spacing and readability
+  - Do NOT include any text outside the JSON array
+  - Do NOT include numbering, bullet points, or extra formatting
+  
+  EXAMPLE CORRECT BOLD TEXT:
+  ✅ 𝗻𝗲𝘁𝘄𝗼𝗿𝗸 𝗰𝗮𝗯𝗹𝗶𝗻𝗴 (all letters consistent)
+  ✅ 𝗮𝗰𝗰𝗲𝘀𝘀 𝗰𝗼𝗻𝘁𝗿𝗼𝗹 (all letters consistent)
+  ❌ 𝗮𝗰𝗰𝗲𝘀𝘀 𝗰𝗼𝗻𝘁𝗿𝗼L (mixing regular L with bold text)
+  
+  RESPONSE FORMAT: Return ONLY the JSON array, nothing else.`
           },
           {
             role: 'user',
@@ -316,17 +328,38 @@ Do not include any other text, formatting, numbering, or explanations. Just the 
         const jsonMatch = cleanedContent.match(/\[[\s\S]*\]/);
         if (jsonMatch) {
           const captionsData = JSON.parse(jsonMatch[0]);
-          const newCaptions: GeneratedCaption[] = captionsData.map((item: any, index: number) => ({
-            id: `${Date.now()}-${index}`,
-            text: fixUnicodeBoldText(item.caption.replace(/\\n/g, '\n')), // Convert escaped \n and fix Unicode
-            style: selectedStyle,
-            isFavorite: false,
-            imageAnalysis: imageAnalysis || undefined
-          }));
+          const newCaptions: GeneratedCaption[] = captionsData.map((item: any, index: number) => {
+            // Extract caption text and clean it
+            let captionText = item.caption || item.text || '';
+            
+            // Remove any remaining "caption": " prefixes
+            captionText = captionText.replace(/^"caption":\s*"/, '').replace(/"$/, '');
+            
+            // Clean up any extra quotes or formatting
+            captionText = captionText.replace(/^["']|["']$/g, '');
+            
+            // Convert escaped newlines and fix Unicode
+            captionText = fixUnicodeBoldText(captionText.replace(/\\n/g, '\n'));
+            
+            return {
+              id: `${Date.now()}-${index}`,
+              text: captionText,
+              style: selectedStyle,
+              isFavorite: false,
+              imageAnalysis: imageAnalysis || undefined
+            };
+          });
           setGeneratedCaptions(newCaptions);
         } else {
           // If no JSON found, try to parse the content as separate captions
-          const captionLines = cleanedContent.split('\n').filter(line => line.trim().length > 20);
+          const captionLines = cleanedContent.split('\n').filter(line => {
+            const trimmed = line.trim();
+            return trimmed.length > 20 && 
+                   !trimmed.startsWith('"caption":') && 
+                   !trimmed.startsWith('"text":') &&
+                   !trimmed.match(/^[0-9]+\./);
+          });
+          
           if (captionLines.length > 0) {
             const newCaptions: GeneratedCaption[] = captionLines.slice(0, 3).map((caption, index) => ({
               id: `${Date.now()}-${index}`,
@@ -394,9 +427,9 @@ Do not include any other text, formatting, numbering, or explanations. Just the 
           <Row className="align-items-center">
             <Col xs="auto">
               <div className="d-flex align-items-center">
-                <div className="brand-icon">
-                  <Brain size={24} />
-                </div>
+                                    <div className="brand-icon">
+                      <Sparkles size={24} />
+                    </div>
                                   <div className="ms-2 d-none d-sm-block">
                     <h5 className="mb-0 fw-bold">Delmi AI</h5>
                     <small className="text-muted">Ask anything about Delmi Training Institute</small>
@@ -467,9 +500,9 @@ Do not include any other text, formatting, numbering, or explanations. Just the 
                 <Row className="justify-content-center">
                   <Col lg={10} xl={9}>
                     {messages.length === 0 ? (
-                      <div className="text-center py-5">
-                        <MessageSquare size={64} className="text-muted mb-4" />
-                                                 <h4 className="fw-bold text-muted mb-3">Welcome to Delmi AI</h4>
+                                             <div className="text-center py-5">
+                         <Sparkles size={64} className="text-primary mb-4" />
+                         <h4 className="fw-bold text-muted mb-3">Welcome to Delmi AI</h4>
                          <p className="text-muted mb-4">Ask me anything about our courses, enrollment, or technical training programs.</p>
                         
                         {/* Quick Start Options */}
