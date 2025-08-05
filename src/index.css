@@ -717,6 +717,11 @@ body {
     height: 32px;
   }
   
+  /* Make subtitle smaller on mobile */
+  .compact-header .text-muted {
+    font-size: 0.7rem;
+  }
+  
   /* Chat layout adjustments */
   .chat-layout {
     height: calc(100vh - 70px); /* Reduce header space */
@@ -815,11 +820,16 @@ body {
     font-size: 0.9rem;
   }
   
-  /* Smaller badges */
-  .badge {
-    font-size: 0.6rem;
-    padding: 0.2rem 0.4rem;
-  }
+      /* Smaller badges */
+    .badge {
+      font-size: 0.6rem;
+      padding: 0.2rem 0.4rem;
+    }
+    
+    /* Make subtitle even smaller on very small screens */
+    .compact-header .text-muted {
+      font-size: 0.65rem;
+    }
   
   /* Input area adjustments */
   .chat-input-area .form-control {
