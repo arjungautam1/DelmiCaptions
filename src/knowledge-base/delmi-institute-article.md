@@ -65,7 +65,6 @@ We focus on practical, industry-aligned skills to empower students for careers i
 
 * **Status:** Starts August 18
 * **Price:** $1,999.99 CAD
-* **🟢 2 spots left**
 * **Focus:** Training includes keypads, RFID, maglocks, panels, and system wiring
 * **Skills Covered:**
   - Access control systems design

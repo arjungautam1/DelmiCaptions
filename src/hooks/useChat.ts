@@ -105,9 +105,32 @@ export const useChat = (): UseChatReturn => {
       // Get response from Groq API
       const response = await groqApi.sendMessage(apiMessages);
 
+      // Clean the response to remove any personal signatures and urgency messaging
+      const cleanedResponse = response
+        .replace(/Best,\s*\n\s*Alex/gi, '')
+        .replace(/Sincerely,\s*\n\s*Alex/gi, '')
+        .replace(/Regards,\s*\n\s*Alex/gi, '')
+        .replace(/Best regards,\s*\n\s*Alex/gi, '')
+        .replace(/Thank you,\s*\n\s*Alex/gi, '')
+        .replace(/Alex\s*$/gi, '')
+        .replace(/Best,\s*\n\s*[A-Z][a-z]+/gi, '')
+        .replace(/Sincerely,\s*\n\s*[A-Z][a-z]+/gi, '')
+        .replace(/Regards,\s*\n\s*[A-Z][a-z]+/gi, '')
+        .replace(/Best regards,\s*\n\s*[A-Z][a-z]+/gi, '')
+        .replace(/Thank you,\s*\n\s*[A-Z][a-z]+/gi, '')
+        .replace(/only \d+ spots? left/gi, '')
+        .replace(/limited spots? available/gi, '')
+        .replace(/hurry, only \d+ spots?/gi, '')
+        .replace(/don't miss out/gi, '')
+        .replace(/act now/gi, '')
+        .replace(/limited time/gi, '')
+        .replace(/hurry up/gi, '')
+        .replace(/spots? filling fast/gi, '')
+        .trim();
+
       const assistantMessage: Message = {
         id: generateMessageId(),
-        content: response,
+        content: cleanedResponse,
         role: 'assistant',
         timestamp: new Date(),
         status: 'sent'
@@ -127,16 +150,24 @@ export const useChat = (): UseChatReturn => {
         )
       );
       
+      // Check for usage limit error
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      let userFriendlyMessage = 'Sorry, I encountered an error while processing your message. Please check your API configuration and try again.';
+      
+      if (errorMessage.includes('rate limit') || errorMessage.includes('quota') || errorMessage.includes('usage limit') || errorMessage.includes('429')) {
+        userFriendlyMessage = '🚫 **You\'ve hit the maximum usage limit!**\n\n💎 **Upgrade your Groq plan for more API calls:**\n• Visit [groq.com](https://groq.com) to upgrade\n• Get higher limits and faster responses\n• Unlock premium features and better performance\n\n📊 **Current Status:** Free tier limit reached';
+      }
+      
       // Add error message
-      const errorMessage: Message = {
+      const assistantMessage: Message = {
         id: generateMessageId(),
-        content: 'Sorry, I encountered an error while processing your message. Please check your API configuration and try again.',
+        content: userFriendlyMessage,
         role: 'assistant',
         timestamp: new Date(),
         status: 'sent'
       };
 
-      setMessages(prev => [...prev, errorMessage]);
+      setMessages(prev => [...prev, assistantMessage]);
     } finally {
       setIsLoading(false);
       setIsTyping(false);
@@ -176,9 +207,32 @@ export const useChat = (): UseChatReturn => {
 
       const response = await groqApi.sendMessage(apiMessages);
 
+      // Clean the response to remove any personal signatures and urgency messaging
+      const cleanedResponse = response
+        .replace(/Best,\s*\n\s*Alex/gi, '')
+        .replace(/Sincerely,\s*\n\s*Alex/gi, '')
+        .replace(/Regards,\s*\n\s*Alex/gi, '')
+        .replace(/Best regards,\s*\n\s*Alex/gi, '')
+        .replace(/Thank you,\s*\n\s*Alex/gi, '')
+        .replace(/Alex\s*$/gi, '')
+        .replace(/Best,\s*\n\s*[A-Z][a-z]+/gi, '')
+        .replace(/Sincerely,\s*\n\s*[A-Z][a-z]+/gi, '')
+        .replace(/Regards,\s*\n\s*[A-Z][a-z]+/gi, '')
+        .replace(/Best regards,\s*\n\s*[A-Z][a-z]+/gi, '')
+        .replace(/Thank you,\s*\n\s*[A-Z][a-z]+/gi, '')
+        .replace(/only \d+ spots? left/gi, '')
+        .replace(/limited spots? available/gi, '')
+        .replace(/hurry, only \d+ spots?/gi, '')
+        .replace(/don't miss out/gi, '')
+        .replace(/act now/gi, '')
+        .replace(/limited time/gi, '')
+        .replace(/hurry up/gi, '')
+        .replace(/spots? filling fast/gi, '')
+        .trim();
+
       const newAssistantMessage: Message = {
         id: generateMessageId(),
-        content: response,
+        content: cleanedResponse,
         role: 'assistant',
         timestamp: new Date(),
         status: 'sent'
@@ -189,15 +243,23 @@ export const useChat = (): UseChatReturn => {
     } catch (error) {
       console.error('Error regenerating response:', error);
       
-      const errorMessage: Message = {
+      // Check for usage limit error
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      let userFriendlyMessage = 'Sorry, I encountered an error while regenerating the response. Please try again.';
+      
+      if (errorMessage.includes('rate limit') || errorMessage.includes('quota') || errorMessage.includes('usage limit') || errorMessage.includes('429')) {
+        userFriendlyMessage = '🚫 **You\'ve hit the maximum usage limit!**\n\n💎 **Upgrade your Groq plan for more API calls:**\n• Visit [groq.com](https://groq.com) to upgrade\n• Get higher limits and faster responses\n• Unlock premium features and better performance\n\n📊 **Current Status:** Free tier limit reached';
+      }
+      
+      const assistantMessage: Message = {
         id: generateMessageId(),
-        content: 'Sorry, I encountered an error while regenerating the response. Please try again.',
+        content: userFriendlyMessage,
         role: 'assistant',
         timestamp: new Date(),
         status: 'sent'
       };
 
-      setMessages(prev => [...prev, errorMessage]);
+      setMessages(prev => [...prev, assistantMessage]);
     } finally {
       setIsLoading(false);
       setIsTyping(false);

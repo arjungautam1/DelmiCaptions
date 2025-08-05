@@ -81,6 +81,20 @@ class GroqApiService {
         }
       };
     } catch (error: any) {
+      // Check for specific rate limit and quota errors
+      if (error.status === 429 || error.message?.includes('rate limit') || error.message?.includes('quota') || error.message?.includes('usage limit')) {
+        throw new Error('rate limit exceeded');
+      }
+      
+      // Check for other common Groq API errors
+      if (error.status === 401) {
+        throw new Error('Invalid API key. Please check your Groq API key configuration.');
+      }
+      
+      if (error.status === 400) {
+        throw new Error('Invalid request. Please check your input and try again.');
+      }
+      
       throw new Error(`Groq API error: ${error.message}`);
     }
   }

@@ -152,7 +152,6 @@ export const delmiInstitute: DelmiInstituteInfo = {
       duration: "5 days intensive",
       price: "$1,999.99 CAD",
       status: "Starts August 18",
-      spotsLeft: 2,
       highlights: [
         "Access control systems design",
         "Card readers and biometric systems",

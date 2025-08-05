@@ -316,15 +316,29 @@ Generate 3 different caption variations that:
 
       const content = response.choices[0]?.message?.content || '';
       
-      // Clean the response to remove any thinking blocks and extra formatting
-      let cleanedContent = content.replace(/<think>[\s\S]*?<\/think>/gi, '')
-                                  .replace(/<thinking>[\s\S]*?<\/thinking>/gi, '')
-                                  .replace(/thinking:\s*[\s\S]*?(?=\n\n|\n[A-Z]|$)/gi, '')
-                                  .replace(/Here are.*?captions.*?:/gi, '')
-                                  .replace(/\*\*Caption \d+:\*\*/gi, '')
-                                  .replace(/\d+\. \*\*Caption \d+:\*\*/gi, '')
-                                  .replace(/\n\s*\n/g, '\n')
-                                  .trim();
+              // Clean the response to remove any thinking blocks and extra formatting
+        let cleanedContent = content.replace(/<think>[\s\S]*?<\/think>/gi, '')
+                                   .replace(/<thinking>[\s\S]*?<\/thinking>/gi, '')
+                                   .replace(/thinking:\s*[\s\S]*?(?=\n\n|\n[A-Z]|$)/gi, '')
+                                   .replace(/Here are.*?captions.*?:/gi, '')
+                                   .replace(/\*\*Caption \d+:\*\*/gi, '')
+                                   .replace(/\d+\. \*\*Caption \d+:\*\*/gi, '')
+                                   .replace(/\n\s*\n/g, '\n')
+                                   .replace(/Best,\s*\n\s*Alex/gi, '')
+                                   .replace(/Sincerely,\s*\n\s*Alex/gi, '')
+                                   .replace(/Regards,\s*\n\s*Alex/gi, '')
+                                   .replace(/Best regards,\s*\n\s*Alex/gi, '')
+                                   .replace(/Thank you,\s*\n\s*Alex/gi, '')
+                                   .replace(/Alex\s*$/gi, '')
+                                   .replace(/only \d+ spots? left/gi, '')
+                                   .replace(/limited spots? available/gi, '')
+                                   .replace(/hurry, only \d+ spots?/gi, '')
+                                   .replace(/don't miss out/gi, '')
+                                   .replace(/act now/gi, '')
+                                   .replace(/limited time/gi, '')
+                                   .replace(/hurry up/gi, '')
+                                   .replace(/spots? filling fast/gi, '')
+                                   .trim();
       
               try {
           // Try to find JSON array in the response
@@ -410,8 +424,17 @@ Generate 3 different caption variations that:
         }
     } catch (error) {
       console.error('Error generating captions:', error);
+      
+      // Check for usage limit error
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      let userFriendlyMessage = 'Failed to generate captions. Please check your connection and try again.';
+      
+      if (errorMessage.includes('rate limit') || errorMessage.includes('quota') || errorMessage.includes('usage limit') || errorMessage.includes('429')) {
+        userFriendlyMessage = '🚫 **You\'ve hit the maximum usage limit!**\n\n💎 **Upgrade your Groq plan for more API calls:**\n• Visit [groq.com](https://groq.com) to upgrade\n• Get higher limits and faster responses\n• Unlock premium features and better performance\n\n📊 **Current Status:** Free tier limit reached';
+      }
+      
       setGeneratedCaptions([]);
-      setGenerationError('Failed to generate captions. Please check your connection and try again.');
+      setGenerationError(userFriendlyMessage);
     } finally {
       setIsGenerating(false);
     }
@@ -451,17 +474,35 @@ Generate 3 different caption variations that:
         <Container fluid>
           <Row className="align-items-center">
             <Col xs="auto">
-              <div className="d-flex align-items-center">
-                                    <div className="brand-icon">
-                      <Sparkles size={24} />
-                    </div>
-                                  <div className="ms-2 d-none d-sm-block">
-                    <h5 className="mb-0 fw-bold">Delmi AI</h5>
-                    <small className="text-muted">Ask anything about Delmi Training Institute</small>
-                  </div>
-                  <div className="ms-2 d-block d-sm-none">
-                    <h6 className="mb-0 fw-bold">Delmi AI</h6>
-                  </div>
+                            <div className="d-flex align-items-center">
+                <div 
+                  className="brand-icon"
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => window.location.reload()}
+                  onMouseEnter={(e) => e.currentTarget.style.opacity = '0.7'}
+                  onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
+                >
+                  <Sparkles size={24} />
+                </div>
+                <div 
+                  className="ms-2 d-none d-sm-block"
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => window.location.reload()}
+                  onMouseEnter={(e) => e.currentTarget.style.opacity = '0.7'}
+                  onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
+                >
+                  <h5 className="mb-0 fw-bold">Delmi AI</h5>
+                  <small className="text-muted">Ask anything about Delmi Training Institute</small>
+                </div>
+                <div 
+                  className="ms-2 d-block d-sm-none"
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => window.location.reload()}
+                  onMouseEnter={(e) => e.currentTarget.style.opacity = '0.7'}
+                  onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
+                >
+                  <h6 className="mb-0 fw-bold">Delmi AI</h6>
+                </div>
               </div>
             </Col>
             <Col>
@@ -509,10 +550,31 @@ Generate 3 different caption variations that:
                 <Row className="justify-content-center">
                   <Col lg={10} xl={9}>
                     <div className="d-flex align-items-center">
-                      <MessageSquare size={18} className="me-2 text-primary" />
-                                             <span className="fw-semibold">Delmi AI Chat</span>
+                                            <MessageSquare size={18} className="me-2 text-primary" />
+                      <span 
+                        className="fw-semibold" 
+                        style={{ 
+                          cursor: 'pointer', 
+                          userSelect: 'none',
+                          transition: 'opacity 0.2s ease'
+                        }}
+                        onClick={() => {
+                          setActiveTab('chat');
+                          clearMessages();
+                          setInputValue('');
+                          setAttachments([]);
+                        }}
+                        onMouseEnter={(e) => e.currentTarget.style.opacity = '0.7'}
+                        onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
+                      >
+                        Delmi AI Chat
+                      </span>
                       <span className="badge bg-primary ms-auto">AI</span>
                       {isTyping && <span className="badge bg-warning ms-2">Typing...</span>}
+                      <span className="badge bg-info ms-2" title="Free tier - Limited API calls">
+                        <Zap size={12} className="me-1" />
+                        Free
+                      </span>
                     </div>
                   </Col>
                 </Row>
@@ -630,10 +692,34 @@ Generate 3 different caption variations that:
                 <Col lg={11} xl={10}>
                   <Card className="content-card">
                     <Card.Header className="py-3">
-                      <div className="d-flex align-items-center">
+                                            <div className="d-flex align-items-center">
                         <Wand2 size={18} className="me-2 text-success" />
-                                                 <span className="fw-semibold">Delmi AI Captions</span>
+                        <span 
+                          className="fw-semibold" 
+                          style={{ 
+                            cursor: 'pointer', 
+                            userSelect: 'none',
+                            transition: 'opacity 0.2s ease'
+                          }}
+                          onClick={() => {
+                            setActiveTab('captions');
+                            setGeneratedCaptions([]);
+                            setGenerationError('');
+                            setCaptionPrompt('');
+                            setMediaFiles([]);
+                            setImageAnalysis('');
+                            setTranscriptContent('');
+                          }}
+                          onMouseEnter={(e) => e.currentTarget.style.opacity = '0.7'}
+                          onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
+                        >
+                          Delmi AI Captions
+                        </span>
                         <span className="badge bg-success ms-auto">AI</span>
+                        <span className="badge bg-info ms-2" title="Free tier - Limited API calls">
+                          <Zap size={12} className="me-1" />
+                          Free
+                        </span>
                       </div>
                     </Card.Header>
                     
