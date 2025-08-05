@@ -57,6 +57,9 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
           style={{ whiteSpace: 'pre-wrap' }}
           dangerouslySetInnerHTML={{
             __html: message.content
+              .replace(/### (.*?)(?=\n|$)/g, '<h3 style="margin: 1rem 0 0.5rem 0; font-size: 1.1rem; font-weight: 600; color: #374151;">$1</h3>')
+              .replace(/## (.*?)(?=\n|$)/g, '<h2 style="margin: 1rem 0 0.5rem 0; font-size: 1.2rem; font-weight: 600; color: #374151;">$1</h2>')
+              .replace(/# (.*?)(?=\n|$)/g, '<h1 style="margin: 1rem 0 0.5rem 0; font-size: 1.3rem; font-weight: 600; color: #374151;">$1</h1>')
               .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
               .replace(/\*(.*?)\*/g, '<em>$1</em>')
               .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" style="color: #6366f1; text-decoration: underline;">$1</a>')

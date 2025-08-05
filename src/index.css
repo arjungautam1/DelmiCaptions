@@ -416,6 +416,26 @@ body {
   border-color: #6366f1;
 }
 
+.recommendation-selected {
+  background: var(--primary-gradient) !important;
+  color: white !important;
+  border-color: transparent !important;
+  transform: scale(1.05);
+  box-shadow: var(--shadow-md);
+}
+
+.recommendations-section {
+  background: rgba(248, 250, 252, 0.8);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: var(--border-radius);
+  transition: var(--transition);
+}
+
+.recommendations-section:hover {
+  background: rgba(248, 250, 252, 0.9);
+  box-shadow: var(--shadow-sm);
+}
+
 /* 📝 Input Area */
 .input-area {
   padding: var(--compact-spacing);

@@ -41,6 +41,7 @@ function App() {
   const [transcriptContent, setTranscriptContent] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [useModernAnalysis, setUseModernAnalysis] = useState(true);
+  const [selectedRecommendation, setSelectedRecommendation] = useState<number | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   // Remove unused ref as we'll use the MediaUpload component
 
@@ -467,6 +468,14 @@ Generate 3 different caption variations that:
     { icon: CreditCard, title: "Payment Plans", query: "What are the payment options?" }
   ];
 
+  const handleRecommendationClick = (index: number) => {
+    // If clicking on a recommendation that's already selected, do nothing
+    if (selectedRecommendation === index) return;
+    
+    setSelectedRecommendation(index);
+    sendMessage(quickStartOptions[index].query);
+  };
+
   return (
     <div className="app-container">
       {/* Compact Header */}
@@ -478,7 +487,10 @@ Generate 3 different caption variations that:
                 <div 
                   className="brand-icon"
                   style={{ cursor: 'pointer' }}
-                  onClick={() => window.location.reload()}
+                  onClick={() => {
+                    setSelectedRecommendation(null);
+                    window.location.reload();
+                  }}
                   onMouseEnter={(e) => e.currentTarget.style.opacity = '0.7'}
                   onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
                 >
@@ -487,7 +499,10 @@ Generate 3 different caption variations that:
                 <div 
                   className="ms-2 d-none d-sm-block"
                   style={{ cursor: 'pointer' }}
-                  onClick={() => window.location.reload()}
+                  onClick={() => {
+                    setSelectedRecommendation(null);
+                    window.location.reload();
+                  }}
                   onMouseEnter={(e) => e.currentTarget.style.opacity = '0.7'}
                   onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
                 >
@@ -497,7 +512,10 @@ Generate 3 different caption variations that:
                 <div 
                   className="ms-2 d-block d-sm-none"
                   style={{ cursor: 'pointer' }}
-                  onClick={() => window.location.reload()}
+                  onClick={() => {
+                    setSelectedRecommendation(null);
+                    window.location.reload();
+                  }}
                   onMouseEnter={(e) => e.currentTarget.style.opacity = '0.7'}
                   onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
                 >
@@ -563,6 +581,7 @@ Generate 3 different caption variations that:
                           clearMessages();
                           setInputValue('');
                           setAttachments([]);
+                          setSelectedRecommendation(null);
                         }}
                         onMouseEnter={(e) => e.currentTarget.style.opacity = '0.7'}
                         onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
@@ -594,19 +613,43 @@ Generate 3 different caption variations that:
                         
                         {/* Quick Start Options */}
                         <div className="d-flex flex-wrap justify-content-center gap-2 mb-4">
-                          {quickStartOptions.map((option, index) => (
-                            <Button
-                              key={index}
-                              variant="outline-primary"
-                              size="sm"
-                              onClick={() => sendMessage(option.query)}
-                              disabled={isLoading}
-                              className="d-flex align-items-center"
-                            >
-                              <option.icon size={14} className="me-2" />
-                              {option.title}
-                            </Button>
-                          ))}
+                          {selectedRecommendation === null ? (
+                            // Show all 4 recommendations initially
+                            quickStartOptions.map((option, index) => (
+                              <Button
+                                key={index}
+                                variant="outline-primary"
+                                size="sm"
+                                onClick={() => handleRecommendationClick(index)}
+                                disabled={isLoading}
+                                className={`d-flex align-items-center ${selectedRecommendation === index ? 'recommendation-selected' : ''}`}
+                              >
+                                <option.icon size={14} className="me-2" />
+                                {option.title}
+                              </Button>
+                            ))
+                          ) : (
+                            // Show the remaining 3 recommendations after one is selected
+                            quickStartOptions
+                              .filter((_, index) => index !== selectedRecommendation)
+                              .map((option, index) => {
+                                // Find the actual index in the original array
+                                const actualIndex = quickStartOptions.indexOf(option);
+                                return (
+                                  <Button
+                                    key={index}
+                                    variant="outline-secondary"
+                                    size="sm"
+                                    onClick={() => handleRecommendationClick(actualIndex)}
+                                    disabled={isLoading}
+                                    className="d-flex align-items-center"
+                                  >
+                                    <option.icon size={14} className="me-2" />
+                                    {option.title}
+                                  </Button>
+                                );
+                              })
+                          )}
                         </div>
                       </div>
                     ) : (
@@ -622,6 +665,33 @@ Generate 3 different caption variations that:
                               <span></span><span></span><span></span>
                             </div>
                             <small className="text-muted">AI is thinking...</small>
+                          </div>
+                        )}
+                        
+                        {/* Show remaining recommendations below chat when one is selected */}
+                        {selectedRecommendation !== null && (
+                          <div className="mt-4 p-3 recommendations-section">
+                            <h6 className="mb-3 text-muted">More questions you might have:</h6>
+                            <div className="d-flex flex-wrap gap-2">
+                              {quickStartOptions
+                                .filter((_, index) => index !== selectedRecommendation)
+                                .map((option, index) => {
+                                  const actualIndex = quickStartOptions.indexOf(option);
+                                  return (
+                                    <Button
+                                      key={index}
+                                      variant="outline-secondary"
+                                      size="sm"
+                                      onClick={() => handleRecommendationClick(actualIndex)}
+                                      disabled={isLoading}
+                                      className="d-flex align-items-center"
+                                    >
+                                      <option.icon size={14} className="me-2" />
+                                      {option.title}
+                                    </Button>
+                                  );
+                                })}
+                            </div>
                           </div>
                         )}
                       </div>
