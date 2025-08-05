@@ -268,7 +268,7 @@ Generate 3 different caption variations that:
 7. Mention Delmi Training Institute prominently
 8. Include relevant course names and technical terms
 9. Use appropriate hashtags from the provided list
-10. Keep length similar to examples (typically 3-5 lines plus CTA)
+10. Keep length similar to examples (typically 3-5 lines plus CTA
 
 IMPORTANT: Return ONLY a valid JSON array in this exact format:
 [{"caption": "your first caption here"}, {"caption": "your second caption here"}, {"caption": "your third caption here"}]
