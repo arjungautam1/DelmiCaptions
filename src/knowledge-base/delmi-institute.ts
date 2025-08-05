@@ -83,7 +83,7 @@ export const delmiInstitute: DelmiInstituteInfo = {
       name: "Network Cabling Specialist",
       code: "DTIL 101",
       description: "Comprehensive network cabling course covering structured cabling, fiber optics, and troubleshooting",
-      duration: "4-5 weeks intensive training",
+      duration: "5 days intensive",
       price: "$1,999.99 CAD",
       highlights: [
         "Structured cabling installation",
@@ -127,7 +127,7 @@ export const delmiInstitute: DelmiInstituteInfo = {
       name: "Electronics & Relays",
       code: "DTIL 401",
       description: "Comprehensive electronic security course covering access control, relays, and automation systems",
-      duration: "4 weeks",
+      duration: "3 days intensive",
       price: "$1,999.99 CAD",
       highlights: [
         "Access control systems and card readers",
@@ -149,7 +149,7 @@ export const delmiInstitute: DelmiInstituteInfo = {
       name: "Access Control Technician",
       code: "DTIL 402",
       description: "Comprehensive access control course covering keypads, RFID, maglocks, panels, and system wiring",
-      duration: "4 weeks",
+      duration: "5 days intensive",
       price: "$1,999.99 CAD",
       status: "Starts August 18",
       spotsLeft: 2,

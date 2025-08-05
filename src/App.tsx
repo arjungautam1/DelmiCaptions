@@ -268,7 +268,7 @@ Generate 3 different caption variations that:
 7. Mention Delmi Training Institute prominently
 8. Include relevant course names and technical terms
 9. Use appropriate hashtags from the provided list
-10. Keep length similar to examples (typically 3-5 lines plus CTA
+10. Keep length similar to examples (typically 3-5 lines plus CTA)
 
 IMPORTANT: Return ONLY a valid JSON array in this exact format:
 [{"caption": "your first caption here"}, {"caption": "your second caption here"}, {"caption": "your third caption here"}]
@@ -397,10 +397,13 @@ Do not include any other text, formatting, numbering, or explanations. Just the 
                 <div className="brand-icon">
                   <Brain size={24} />
                 </div>
-                <div className="ms-2">
-                  <h5 className="mb-0 fw-bold">AI Captions Studio</h5>
-                  <small className="text-muted">Delmi Training Institute</small>
-                </div>
+                                  <div className="ms-2 d-none d-sm-block">
+                    <h5 className="mb-0 fw-bold">Delmi AI</h5>
+                    <small className="text-muted">Ask anything about Delmi Training Institute</small>
+                  </div>
+                  <div className="ms-2 d-block d-sm-none">
+                    <h6 className="mb-0 fw-bold">Delmi AI</h6>
+                  </div>
               </div>
             </Col>
             <Col>
@@ -441,138 +444,123 @@ Do not include any other text, formatting, numbering, or explanations. Just the 
       {/* Main Content - Tab-Based Layout */}
       <Container fluid className="main-content">
         {activeTab === 'chat' && (
-          <div className="chat-layout">
-            {/* Scrollable Content Area */}
-            <div className="content-area">
-              <Row className="justify-content-center">
-                <Col lg={11} xl={10}>
-                  <Card className="content-card">
-                    <Card.Header className="py-3">
-                      <div className="d-flex align-items-center">
-                        <MessageSquare size={18} className="me-2 text-primary" />
-                        <span className="fw-semibold">AI Assistant Chat</span>
-                        <span className="badge bg-primary ms-auto">AI</span>
-                        {isTyping && <span className="badge bg-warning ms-2">Typing...</span>}
-                      </div>
-                    </Card.Header>
-                    
-                    <Card.Body className="p-4">
-                      <Row>
-                        {/* Left Column - Quick Actions */}
-                        <Col md={3}>
-
-                          {/* Quick Start Options */}
-                          <div className="mb-3">
-                            <Form.Label className="fw-medium mb-2">Quick Questions</Form.Label>
-                            <div className="d-flex flex-column gap-2">
-                              {quickStartOptions.map((option, index) => (
-                                <Button
-                                  key={index}
-                                  variant="outline-primary"
-                                  size="sm"
-                                  onClick={() => sendMessage(option.query)}
-                                  className="text-start d-flex align-items-center"
-                                  disabled={isLoading}
-                                >
-                                  <option.icon size={14} className="me-2" />
-                                  <span className="small">{option.title}</span>
-                                </Button>
-                              ))}
-                            </div>
-                          </div>
-
-                          {/* Chat Input */}
-                          <div className="mb-3">
-                            <Form.Label className="fw-medium mb-2">Your Message</Form.Label>
-                            <Form.Control
-                              as="textarea"
-                              rows={3}
-                              value={inputValue}
-                              onChange={(e) => setInputValue(e.target.value)}
-                              onKeyDown={handleKeyPress}
-                              placeholder="Ask anything about Delmi Training Institute..."
-                              disabled={isLoading}
-                              className="resize-none"
-                            />
-                            <Form.Text className="text-muted">
-                              Press Enter to send • Shift+Enter for new line
-                            </Form.Text>
-                          </div>
-
-                          {/* Send Button */}
-                          <div className="d-grid">
-                            <Button 
-                              variant={inputValue.trim() || attachments.length > 0 ? "primary" : "outline-secondary"}
-                              size="lg"
-                              onClick={handleSend}
-                              disabled={(!inputValue.trim() && attachments.length === 0) || isLoading}
-                              className="fw-semibold"
-                            >
-                              {isLoading ? (
-                                <>
-                                  <Spinner size="sm" className="me-2" />
-                                  AI is thinking...
-                                </>
-                              ) : (
-                                <>
-                                  <Send size={18} className="me-2" />
-                                  Send Message
-                                </>
-                              )}
-                            </Button>
-                          </div>
-                        </Col>
-
-                        {/* Right Column - Chat Messages */}
-                        <Col md={9}>
-                          <div className="chat-results-section h-100">
-                            {messages.length === 0 ? (
-                              <div className="text-center py-5">
-                                <MessageSquare size={48} className="text-muted mb-3" />
-                                <h6 className="fw-bold text-muted mb-2">Chat conversation will appear here</h6>
-                                <p className="text-muted small mb-0">
-                                  Start by asking a question or uploading files
-                                </p>
-                              </div>
-                            ) : (
-                              <div className="d-flex flex-column gap-2">
-                                <div className="d-flex align-items-center justify-content-between mb-3">
-                                  <h6 className="fw-bold mb-0">
-                                    Conversation ({messages.length} message{messages.length !== 1 ? 's' : ''})
-                                  </h6>
-                                  <Badge bg="primary" className="d-flex align-items-center">
-                                    <MessageSquare size={12} className="me-1" />
-                                    AI Chat
-                                  </Badge>
-                                </div>
-                                
-                                <div className="messages-list" style={{ maxHeight: 'calc(100vh - 300px)', overflowY: 'auto', paddingBottom: '20px' }}>
-                                  {messages.map((message) => (
-                                    <div key={message.id} className="mb-3">
-                                      <MessageBubble message={message} />
-                                    </div>
-                                  ))}
-                                  {isTyping && (
-                                    <div className="typing-indicator d-flex align-items-center p-3 bg-light rounded mb-2">
-                                      <div className="typing-dots me-2">
-                                        <span></span><span></span><span></span>
-                                      </div>
-                                      <small className="text-muted">AI is thinking...</small>
-                                    </div>
-                                  )}
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                        </Col>
-                      </Row>
-                    </Card.Body>
-                  </Card>
-                </Col>
-              </Row>
+          <div className="chat-layout d-flex flex-column h-100">
+            {/* Chat Header */}
+            <div className="chat-header p-3 border-bottom">
+              <Container>
+                <Row className="justify-content-center">
+                  <Col lg={10} xl={9}>
+                    <div className="d-flex align-items-center">
+                      <MessageSquare size={18} className="me-2 text-primary" />
+                                             <span className="fw-semibold">Delmi AI Chat</span>
+                      <span className="badge bg-primary ms-auto">AI</span>
+                      {isTyping && <span className="badge bg-warning ms-2">Typing...</span>}
+                    </div>
+                  </Col>
+                </Row>
+              </Container>
             </div>
 
-            {/* No separate bottom input area needed anymore */}
+            {/* Chat Messages Area */}
+            <div className="flex-1 overflow-auto">
+              <Container className="py-4">
+                <Row className="justify-content-center">
+                  <Col lg={10} xl={9}>
+                    {messages.length === 0 ? (
+                      <div className="text-center py-5">
+                        <MessageSquare size={64} className="text-muted mb-4" />
+                                                 <h4 className="fw-bold text-muted mb-3">Welcome to Delmi AI</h4>
+                         <p className="text-muted mb-4">Ask me anything about our courses, enrollment, or technical training programs.</p>
+                        
+                        {/* Quick Start Options */}
+                        <div className="d-flex flex-wrap justify-content-center gap-2 mb-4">
+                          {quickStartOptions.map((option, index) => (
+                            <Button
+                              key={index}
+                              variant="outline-primary"
+                              size="sm"
+                              onClick={() => sendMessage(option.query)}
+                              disabled={isLoading}
+                              className="d-flex align-items-center"
+                            >
+                              <option.icon size={14} className="me-2" />
+                              {option.title}
+                            </Button>
+                          ))}
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="messages-container">
+                        {messages.map((message) => (
+                          <div key={message.id} className="mb-4">
+                            <MessageBubble message={message} />
+                          </div>
+                        ))}
+                        {isTyping && (
+                          <div className="typing-indicator d-flex align-items-center p-3 bg-light rounded mb-4">
+                            <div className="typing-dots me-2">
+                              <span></span><span></span><span></span>
+                            </div>
+                            <small className="text-muted">AI is thinking...</small>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </Col>
+                </Row>
+              </Container>
+            </div>
+
+            {/* Bottom Input Area - ChatGPT Style */}
+            <div className="chat-input-area border-top bg-white">
+              <Container className="py-3">
+                <Row className="justify-content-center">
+                  <Col lg={10} xl={9}>
+                    <div className="position-relative">
+                      <Form.Control
+                        as="textarea"
+                        rows={1}
+                        value={inputValue}
+                        onChange={(e) => setInputValue(e.target.value)}
+                        onKeyDown={handleKeyPress}
+                        placeholder="Ask anything about Delmi Training Institute..."
+                        disabled={isLoading}
+                        className="resize-none pe-5"
+                        style={{ 
+                          minHeight: '56px',
+                          maxHeight: '200px',
+                          paddingRight: '60px',
+                          border: '1px solid #e9ecef',
+                          borderRadius: '28px',
+                          boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                          fontSize: '18px',
+                          padding: '16px 20px'
+                        }}
+                      />
+                      <Button
+                        variant="primary"
+                        size="sm"
+                        onClick={handleSend}
+                        disabled={!inputValue.trim() || isLoading}
+                        className="position-absolute end-0 top-50 translate-middle-y me-3 rounded-circle"
+                        style={{ width: '42px', height: '42px', padding: '0' }}
+                      >
+                        {isLoading ? (
+                          <Spinner size="sm" />
+                        ) : (
+                          <Send size={16} />
+                        )}
+                      </Button>
+                    </div>
+                    <div className="text-center mt-2">
+                      <small className="text-muted">
+                        Press Enter to send • Shift+Enter for new line
+                      </small>
+                    </div>
+                  </Col>
+                </Row>
+              </Container>
+            </div>
           </div>
         )}
 
@@ -586,7 +574,7 @@ Do not include any other text, formatting, numbering, or explanations. Just the 
                     <Card.Header className="py-3">
                       <div className="d-flex align-items-center">
                         <Wand2 size={18} className="me-2 text-success" />
-                        <span className="fw-semibold">AI Captions Studio</span>
+                                                 <span className="fw-semibold">Delmi AI Captions</span>
                         <span className="badge bg-success ms-auto">AI</span>
                       </div>
                     </Card.Header>
