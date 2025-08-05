@@ -35,6 +35,7 @@ function App() {
   const [attachments, setAttachments] = useState<File[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedCaptions, setGeneratedCaptions] = useState<GeneratedCaption[]>([]);
+  const [generationError, setGenerationError] = useState<string | null>(null);
   const [mediaFiles, setMediaFiles] = useState<MediaFile[]>([]);
   const [imageAnalysis, setImageAnalysis] = useState<string | null>(null);
   const [transcriptContent, setTranscriptContent] = useState<string | null>(null);
@@ -192,10 +193,12 @@ function App() {
     }
   };
 
-  const generateCaptions = async () => {
-    if (!captionPrompt.trim() && !imageAnalysis && !transcriptContent) return;
+      const generateCaptions = async () => {
+      if (!captionPrompt.trim() && !imageAnalysis && !transcriptContent) return;
 
-    setIsGenerating(true);
+      setIsGenerating(true);
+      setGenerationError(null);
+      setGeneratedCaptions([]); // Clear previous results
     try {
       const context = contextGenerator.generateContext(
         selectedStyle,
@@ -323,70 +326,92 @@ Generate 3 different caption variations that:
                                   .replace(/\n\s*\n/g, '\n')
                                   .trim();
       
-      try {
-        // Try to find JSON array in the response
-        const jsonMatch = cleanedContent.match(/\[[\s\S]*\]/);
-        if (jsonMatch) {
-          const captionsData = JSON.parse(jsonMatch[0]);
-          const newCaptions: GeneratedCaption[] = captionsData.map((item: any, index: number) => {
-            // Extract caption text and clean it
-            let captionText = item.caption || item.text || '';
+              try {
+          // Try to find JSON array in the response
+          const jsonMatch = cleanedContent.match(/\[[\s\S]*\]/);
+          if (jsonMatch) {
+            const captionsData = JSON.parse(jsonMatch[0]);
             
-            // Remove any remaining "caption": " prefixes
-            captionText = captionText.replace(/^"caption":\s*"/, '').replace(/"$/, '');
+            // Validate that we have complete captions
+            const validCaptions = captionsData.filter((item: any) => {
+              const captionText = item.caption || item.text || '';
+              return captionText.length > 10 && 
+                     !captionText.includes('"caption":') &&
+                     !captionText.includes('"text":') &&
+                     captionText.trim().length > 0;
+            });
             
-            // Clean up any extra quotes or formatting
-            captionText = captionText.replace(/^["']|["']$/g, '');
-            
-            // Convert escaped newlines and fix Unicode
-            captionText = fixUnicodeBoldText(captionText.replace(/\\n/g, '\n'));
-            
-            return {
-              id: `${Date.now()}-${index}`,
-              text: captionText,
-              style: selectedStyle,
-              isFavorite: false,
-              imageAnalysis: imageAnalysis || undefined
-            };
-          });
-          setGeneratedCaptions(newCaptions);
-        } else {
-          // If no JSON found, try to parse the content as separate captions
-          const captionLines = cleanedContent.split('\n').filter(line => {
-            const trimmed = line.trim();
-            return trimmed.length > 20 && 
-                   !trimmed.startsWith('"caption":') && 
-                   !trimmed.startsWith('"text":') &&
-                   !trimmed.match(/^[0-9]+\./);
-          });
-          
-          if (captionLines.length > 0) {
-            const newCaptions: GeneratedCaption[] = captionLines.slice(0, 3).map((caption, index) => ({
-              id: `${Date.now()}-${index}`,
-              text: fixUnicodeBoldText(caption.replace(/^\d+\./g, '').replace(/^\*/g, '').replace(/\\n/g, '\n').trim()),
-              style: selectedStyle,
-              isFavorite: false,
-              imageAnalysis: imageAnalysis || undefined
-            }));
-            setGeneratedCaptions(newCaptions);
+            if (validCaptions.length > 0) {
+              const newCaptions: GeneratedCaption[] = validCaptions.map((item: any, index: number) => {
+                // Extract caption text and clean it
+                let captionText = item.caption || item.text || '';
+                
+                // Remove any remaining "caption": " prefixes
+                captionText = captionText.replace(/^"caption":\s*"/, '').replace(/"$/, '');
+                
+                // Clean up any extra quotes or formatting
+                captionText = captionText.replace(/^["']|["']$/g, '');
+                
+                // Convert escaped newlines and fix Unicode
+                captionText = fixUnicodeBoldText(captionText.replace(/\\n/g, '\n'));
+                
+                // Only return if caption is complete and valid
+                if (captionText.length < 10 || captionText.includes('"caption":') || captionText.includes('"text":')) {
+                  return null;
+                }
+                
+                return {
+                  id: `${Date.now()}-${index}`,
+                  text: captionText,
+                  style: selectedStyle,
+                  isFavorite: false,
+                  imageAnalysis: imageAnalysis || undefined
+                };
+              }).filter(Boolean); // Remove null entries
+              
+              if (newCaptions.length > 0) {
+                setGeneratedCaptions(newCaptions);
+              } else {
+                throw new Error('No valid captions found after validation');
+              }
+            } else {
+              throw new Error('No valid captions found');
+            }
           } else {
-            throw new Error('No valid captions found');
+            // If no JSON found, try to parse the content as separate captions
+            const captionLines = cleanedContent.split('\n').filter(line => {
+              const trimmed = line.trim();
+              return trimmed.length > 20 && 
+                     !trimmed.startsWith('"caption":') && 
+                     !trimmed.startsWith('"text":') &&
+                     !trimmed.match(/^[0-9]+\./) &&
+                     !trimmed.includes('"caption":') &&
+                     !trimmed.includes('"text":');
+            });
+            
+            if (captionLines.length > 0) {
+              const newCaptions: GeneratedCaption[] = captionLines.slice(0, 3).map((caption, index) => ({
+                id: `${Date.now()}-${index}`,
+                text: fixUnicodeBoldText(caption.replace(/^\d+\./g, '').replace(/^\*/g, '').replace(/\\n/g, '\n').trim()),
+                style: selectedStyle,
+                isFavorite: false,
+                imageAnalysis: imageAnalysis || undefined
+              }));
+              setGeneratedCaptions(newCaptions);
+            } else {
+              throw new Error('No valid captions found');
+            }
           }
+        } catch (parseError) {
+          console.error('Parse error:', parseError);
+          // Don't show fallback caption if parsing fails - just show error
+          setGeneratedCaptions([]);
+          setGenerationError('Unable to generate captions. Please try again.');
         }
-      } catch (parseError) {
-        console.error('Parse error:', parseError);
-        const fallbackCaption: GeneratedCaption = {
-          id: `${Date.now()}`,
-          text: fixUnicodeBoldText((cleanedContent || 'Unable to generate captions. Please try again.').replace(/\\n/g, '\n')),
-          style: selectedStyle,
-          isFavorite: false,
-          imageAnalysis: imageAnalysis || undefined
-        };
-        setGeneratedCaptions([fallbackCaption]);
-      }
     } catch (error) {
       console.error('Error generating captions:', error);
-      alert('Error generating captions. Please check your API key and try again.');
+      setGeneratedCaptions([]);
+      setGenerationError('Failed to generate captions. Please check your connection and try again.');
     } finally {
       setIsGenerating(false);
     }
@@ -698,13 +723,15 @@ Generate 3 different caption variations that:
 
                         {/* Right Column - Results */}
                         <Col md={9}>
-                          <div className="results-section h-100">
-                            <CaptionResults
-                              captions={generatedCaptions}
-                              onToggleFavorite={toggleFavorite}
-                              onCopyCaption={copyToClipboard}
-                            />
-                          </div>
+                                                     <div className="results-section h-100">
+                             <CaptionResults
+                               captions={generatedCaptions}
+                               onToggleFavorite={toggleFavorite}
+                               onCopyCaption={copyToClipboard}
+                               isGenerating={isGenerating}
+                               error={generationError}
+                             />
+                           </div>
                         </Col>
                       </Row>
                     </Card.Body>

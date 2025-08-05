@@ -14,12 +14,16 @@ interface CaptionResultsProps {
   captions: GeneratedCaption[];
   onToggleFavorite: (id: string) => void;
   onCopyCaption: (caption: GeneratedCaption) => Promise<void>;
+  isGenerating?: boolean;
+  error?: string | null;
 }
 
 const CaptionResults: React.FC<CaptionResultsProps> = ({
   captions,
   onToggleFavorite,
-  onCopyCaption
+  onCopyCaption,
+  isGenerating = false,
+  error = null
 }) => {
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
@@ -28,6 +32,34 @@ const CaptionResults: React.FC<CaptionResultsProps> = ({
     setCopiedId(caption.id);
     setTimeout(() => setCopiedId(null), 2000);
   };
+
+  if (isGenerating) {
+    return (
+      <div className="caption-results-empty text-center py-5">
+        <div className="spinner-border text-primary mb-3" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
+        <h6 className="text-muted mb-2">Generating amazing captions...</h6>
+        <p className="text-muted small mb-0">
+          Please wait while Delmi AI creates your captions
+        </p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="caption-results-empty text-center py-5">
+        <div className="text-danger mb-3">
+          <Sparkles size={48} className="opacity-25" />
+        </div>
+        <h6 className="text-danger mb-2">Generation failed</h6>
+        <p className="text-muted small mb-0">
+          {error}
+        </p>
+      </div>
+    );
+  }
 
   if (captions.length === 0) {
     return (
