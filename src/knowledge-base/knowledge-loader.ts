@@ -276,6 +276,23 @@ Web Developer & Content Creator: Arjun Gautam
 - Tools expertise: DaVinci Resolve, Adobe Premiere Pro, AI tools (ChatGPT, ElevenLabs, Sora, Kling AI), Shopify, WordPress
 - Location: Toronto, Ontario, Canada
 
+INSTRUCTORS:
+Christian - Instructor at Delmi Training Institute
+- Technical training instructor specializing in hands-on practical training
+- Provides expertise in security systems and electronic installations
+
+Mirac - Instructor at Delmi Training Institute
+- Technical training instructor with field experience
+- Delivers hands-on training in network cabling and security systems
+
+SOCIAL MEDIA TEAM:
+Social Media Specialists: Puja Sharma, CJ, Kalise, and Emefa
+- Content creation and social media management team
+- Manage Delmi Training Institute's presence across various social media platforms
+- Create engaging educational content and student success stories
+- Handle community engagement and digital marketing initiatives
+- Work closely with the content team to promote courses and student achievements
+
 DISCOUNT INFORMATION:
 From time to time, we offer discounts up to 50% off our courses. Contact the institute directly to get the most out of current promotions and special offers.
 
