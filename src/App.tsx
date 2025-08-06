@@ -74,7 +74,7 @@ function App() {
     // Define reverse mapping to normalize incorrect Unicode characters
     const reverseMap: { [key: string]: string } = {
       // Fix common Unicode variants that should be normalized
-      '𝗞': 'K', '𝗚': 'G', '𝗿': 'r', '𝗼': 'o', '𝗹': 'l', '𝗹': 'l', '𝗘': 'E', '𝗿': 'r', '𝗼': 'o', '𝗹': 'l', '𝗹': 'l'
+      '𝗞': 'K', '𝗚': 'G', '𝗿': 'r', '𝗼': 'o', '𝗹': 'l', '𝗘': 'E'
     };
 
     // Define sets of Unicode bold characters for easier checking
