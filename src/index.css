@@ -724,6 +724,19 @@ body {
   .d-flex.flex-wrap.justify-content-center.gap-2 .btn {
     margin-bottom: 0.5rem;
   }
+  
+  /* Mobile subtitle adjustments */
+  .compact-header .text-muted {
+    font-size: 0.55rem !important;
+    line-height: 1.1;
+    margin-top: 0.1rem;
+  }
+  
+  /* Ensure header fits on mobile */
+  .compact-header .d-flex.align-items-center {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
 }
 
 @media (max-width: 767.98px) {
@@ -739,7 +752,8 @@ body {
   
   /* Make subtitle smaller on mobile */
   .compact-header .text-muted {
-    font-size: 0.7rem;
+    font-size: 0.6rem !important;
+    line-height: 1.1;
   }
   
   /* Chat layout adjustments */
@@ -848,7 +862,24 @@ body {
     
     /* Make subtitle even smaller on very small screens */
     .compact-header .text-muted {
-      font-size: 0.65rem;
+      font-size: 0.5rem !important;
+      line-height: 1.1;
+      margin-top: 0;
+    }
+    
+    /* Compact header for very small screens */
+    .compact-header {
+      padding: 0.3rem 0;
+    }
+    
+    .compact-header h5 {
+      font-size: 0.9rem;
+      margin-bottom: 0.1rem;
+    }
+    
+    .compact-header h6 {
+      font-size: 0.85rem;
+      margin-bottom: 0.1rem;
     }
   
   /* Input area adjustments */
@@ -856,6 +887,12 @@ body {
     font-size: 14px;
     min-height: 44px;
     padding: 10px 45px 10px 14px;
+  }
+  
+  /* Smaller placeholder text on mobile */
+  .chat-input-area .form-control::placeholder {
+    font-size: 13px;
+    opacity: 0.8;
   }
   
   .chat-input-area .btn {
@@ -867,6 +904,12 @@ body {
   .message-content {
     font-size: 0.8rem;
     padding: 0.6rem;
+  }
+  
+  /* Even smaller placeholder on very small screens */
+  .chat-input-area .form-control::placeholder {
+    font-size: 12px;
+    opacity: 0.7;
   }
 }
 

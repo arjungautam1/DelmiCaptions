@@ -496,19 +496,20 @@ Generate 3 different caption variations that:
                 >
                   <Sparkles size={24} />
                 </div>
-                <div 
-                  className="ms-2 d-none d-sm-block"
-                  style={{ cursor: 'pointer' }}
-                  onClick={() => {
-                    setSelectedRecommendation(null);
-                    window.location.reload();
-                  }}
-                  onMouseEnter={(e) => e.currentTarget.style.opacity = '0.7'}
-                  onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
-                >
-                  <h5 className="mb-0 fw-bold">Delmi AI</h5>
-                  <small className="text-muted">Ask anything about Delmi Training Institute</small>
-                </div>
+                                  <div 
+                    className="ms-2 d-none d-sm-block"
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => {
+                      setSelectedRecommendation(null);
+                      window.location.reload();
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.opacity = '0.7'}
+                    onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
+                  >
+                    <h5 className="mb-0 fw-bold">Delmi AI</h5>
+                    <small className="text-muted d-none d-md-block">Ask anything about Delmi Training Institute</small>
+                    <small className="text-muted d-block d-md-none">Ask about Delmi Training</small>
+                  </div>
                 <div 
                   className="ms-2 d-block d-sm-none"
                   style={{ cursor: 'pointer' }}
@@ -713,7 +714,7 @@ Generate 3 different caption variations that:
                         value={inputValue}
                         onChange={(e) => setInputValue(e.target.value)}
                         onKeyDown={handleKeyPress}
-                        placeholder="Ask anything about Delmi Training Institute..."
+                        placeholder="Ask about Delmi Training Institute..."
                         disabled={isLoading}
                         className="resize-none pe-5"
                         style={{ 
