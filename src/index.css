@@ -128,9 +128,10 @@ body {
 /* 🎯 Layout Containers */
 .chat-layout,
 .caption-layout {
-  height: calc(100vh - 80px); /* Full viewport minus header */
+  height: 100vh; /* Full viewport height */
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 /* 💬 ChatGPT-style Chat Layout */
@@ -149,6 +150,9 @@ body {
   border-top: 1px solid #e9ecef;
   flex-shrink: 0;
   box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+  position: sticky;
+  bottom: 0;
+  z-index: 1000;
 }
 
 .flex-1 {
@@ -758,7 +762,25 @@ body {
   
   /* Chat layout adjustments */
   .chat-layout {
-    height: calc(100vh - 70px); /* Reduce header space */
+    height: 100vh; /* Full viewport height */
+    padding-bottom: 0;
+  }
+  
+  /* Ensure input area is always visible on mobile */
+  .chat-input-area {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    border-top: 1px solid #e9ecef;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+    z-index: 1000;
+  }
+  
+  /* Adjust messages area to account for fixed input */
+  .messages-container {
+    padding-bottom: 80px; /* Space for fixed input area */
   }
   
   .chat-header .container,
@@ -910,6 +932,20 @@ body {
   .chat-input-area .form-control::placeholder {
     font-size: 12px;
     opacity: 0.7;
+  }
+  
+  /* Ensure input area is fixed on very small screens too */
+  .chat-input-area {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+  }
+  
+  /* Adjust padding for very small screens */
+  .messages-container {
+    padding-bottom: 70px;
   }
 }
 
