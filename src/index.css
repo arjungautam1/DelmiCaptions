@@ -749,6 +749,23 @@ body {
     display: none;
   }
   
+  /* Mobile navigation layout */
+  .compact-nav {
+    justify-content: center;
+    gap: 0.5rem;
+  }
+  
+  .compact-nav .nav-link {
+    min-width: 60px;
+    text-align: center;
+  }
+  
+  /* Clear button mobile layout */
+  .compact-header .btn-outline-secondary {
+    min-width: 50px;
+    text-align: center;
+  }
+  
   .brand-icon {
     width: 32px;
     height: 32px;
@@ -875,6 +892,23 @@ body {
   .caption-layout .content-card {
     min-height: auto;
   }
+  
+  /* Caption generator mobile spacing */
+  .caption-layout .content-card .card-header {
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .caption-layout .content-card .card-body {
+    padding: 1rem;
+    gap: 1rem;
+  }
+  
+  /* Mobile caption sections spacing */
+  .caption-layout .col-md-3,
+  .caption-layout .col-md-9 {
+    margin-bottom: 1rem;
+  }
 }
 
 @media (max-width: 575.98px) {
@@ -909,20 +943,39 @@ body {
       margin-top: 0;
     }
     
-    /* Compact header for very small screens */
-    .compact-header {
-      padding: 0.3rem 0;
-    }
-    
-    .compact-header h5 {
-      font-size: 0.9rem;
-      margin-bottom: 0.1rem;
-    }
-    
-    .compact-header h6 {
-      font-size: 0.85rem;
-      margin-bottom: 0.1rem;
-    }
+      /* Compact header for very small screens */
+  .compact-header {
+    padding: 0.3rem 0;
+  }
+  
+  .compact-header h5 {
+    font-size: 0.9rem;
+    margin-bottom: 0.1rem;
+  }
+  
+  .compact-header h6 {
+    font-size: 0.85rem;
+    margin-bottom: 0.1rem;
+  }
+  
+  /* Mobile navigation optimization */
+  .compact-nav {
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+  
+  .compact-nav .nav-link {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.8rem;
+    border-radius: 6px;
+  }
+  
+  /* Clear button mobile optimization */
+  .compact-header .btn-outline-secondary {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.75rem;
+    border-radius: 6px;
+  }
   
   /* Input area adjustments */
   .chat-input-area .form-control {
@@ -987,6 +1040,28 @@ body {
   /* Adjust padding for very small screens */
   .messages-container {
     padding-bottom: 70px;
+  }
+  
+  /* Caption layout very small screen fixes */
+  .caption-layout .content-card .card-header {
+    padding: 0.5rem 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  .caption-layout .content-card .card-body {
+    padding: 0.75rem;
+  }
+  
+  /* Mobile caption controls spacing */
+  .caption-layout .col-md-3 > div,
+  .caption-layout .col-md-9 > div {
+    margin-bottom: 0.75rem;
+  }
+  
+  /* Results section mobile spacing */
+  .caption-layout .results-section {
+    margin-top: 1rem;
+    padding-top: 1rem;
   }
 }
 

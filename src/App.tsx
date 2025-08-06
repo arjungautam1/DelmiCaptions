@@ -521,7 +521,7 @@ Generate 3 different caption variations that:
                   onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
                 >
                   <h6 className="mb-0 fw-bold">Delmi AI</h6>
-                </div>
+              </div>
               </div>
             </Col>
             <Col>
@@ -529,11 +529,11 @@ Generate 3 different caption variations that:
                 <Nav.Item>
                   <Nav.Link 
                     active={activeTab === 'chat'} 
-                    onClick={() => setActiveTab('chat')}
-                    className="px-3 py-2"
+                onClick={() => setActiveTab('chat')}
+                    className="px-2 py-1 d-flex align-items-center justify-content-center"
                   >
-                    <MessageSquare size={16} className="me-1" />
-                    Chat
+                    <MessageSquare size={14} className="me-1" />
+                    <span className="d-none d-sm-inline">Chat</span>
                     {messages.length > 0 && <span className="badge bg-primary ms-1">{messages.length}</span>}
                   </Nav.Link>
                 </Nav.Item>
@@ -541,18 +541,25 @@ Generate 3 different caption variations that:
                   <Nav.Link 
                     active={activeTab === 'captions'} 
                     onClick={() => setActiveTab('captions')}
-                    className="px-3 py-2"
+                    className="px-2 py-1 d-flex align-items-center justify-content-center"
+                    title="Generate AI Captions"
                   >
-                    <Wand2 size={16} className="me-1" />
-                    Captions
-                    <span className="badge bg-success ms-1">AI</span>
+                    <Sparkles size={14} className="me-1" />
+                    <span className="d-none d-sm-inline me-1">Caption</span>
+                    <span className="badge bg-success">AI</span>
                   </Nav.Link>
                 </Nav.Item>
               </Nav>
             </Col>
             <Col xs="auto">
-              <Button variant="outline-secondary" size="sm" onClick={clearMessages}>
-                Clear
+              <Button
+                variant="outline-secondary" 
+                size="sm"
+                onClick={clearMessages}
+                className="px-2 py-1 d-flex align-items-center justify-content-center"
+              >
+                <span className="d-none d-sm-inline">Clear</span>
+                <span className="d-inline d-sm-none">×</span>
               </Button>
             </Col>
           </Row>
@@ -617,17 +624,17 @@ Generate 3 different caption variations that:
                           {selectedRecommendation === null ? (
                             // Show all 4 recommendations initially
                             quickStartOptions.map((option, index) => (
-                              <Button
+                    <Button
                                 key={index}
                                 variant="outline-primary"
-                                size="sm"
+                      size="sm"
                                 onClick={() => handleRecommendationClick(index)}
                                 disabled={isLoading}
                                 className={`d-flex align-items-center ${selectedRecommendation === index ? 'recommendation-selected' : ''}`}
-                              >
+                    >
                                 <option.icon size={14} className="me-2" />
                                 {option.title}
-                              </Button>
+                    </Button>
                             ))
                           ) : (
                             // Show the remaining 3 recommendations after one is selected
@@ -637,22 +644,22 @@ Generate 3 different caption variations that:
                                 // Find the actual index in the original array
                                 const actualIndex = quickStartOptions.indexOf(option);
                                 return (
-                                  <Button
+                    <Button
                                     key={index}
                                     variant="outline-secondary"
-                                    size="sm"
+                      size="sm"
                                     onClick={() => handleRecommendationClick(actualIndex)}
                                     disabled={isLoading}
                                     className="d-flex align-items-center"
-                                  >
+                    >
                                     <option.icon size={14} className="me-2" />
                                     {option.title}
-                                  </Button>
+                    </Button>
                                 );
                               })
                           )}
-                        </div>
-                      </div>
+                  </div>
+                </div>
                     ) : (
                       <div className="messages-container">
                         {messages.map((message) => (
@@ -664,11 +671,11 @@ Generate 3 different caption variations that:
                           <div className="typing-indicator d-flex align-items-center p-3 bg-light rounded mb-4">
                             <div className="typing-dots me-2">
                               <span></span><span></span><span></span>
-                            </div>
+                </div>
                             <small className="text-muted">AI is thinking...</small>
-                          </div>
-                        )}
-                        
+              </div>
+            )}
+
                         {/* Show remaining recommendations below chat when one is selected */}
                         {selectedRecommendation !== null && (
                           <div className="mt-4 p-3 recommendations-section">
@@ -692,10 +699,10 @@ Generate 3 different caption variations that:
                                     </Button>
                                   );
                                 })}
-                            </div>
-                          </div>
-                        )}
-                      </div>
+                </div>
+              </div>
+            )}
+          </div>
                     )}
                   </Col>
                 </Row>
@@ -753,9 +760,9 @@ Generate 3 different caption variations that:
               </Container>
             </div>
           </div>
-        )}
-
-        {activeTab === 'captions' && (
+            )}
+            
+            {activeTab === 'captions' && (
           <div className="caption-layout">
             {/* Scrollable Content Area */}
             <div className="content-area">
@@ -784,7 +791,7 @@ Generate 3 different caption variations that:
                           onMouseEnter={(e) => e.currentTarget.style.opacity = '0.7'}
                           onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
                         >
-                          Delmi AI Captions
+                          AI Caption Generator
                         </span>
                         <span className="badge bg-success ms-auto">AI</span>
                         <span className="badge bg-info ms-2" title="Free tier - Limited API calls">
@@ -830,7 +837,7 @@ Generate 3 different caption variations that:
                               className="resize-none"
                               disabled={isGenerating}
                             />
-                          </div>
+        </div>
 
                           {/* Caption Style Selection */}
                           <div className="mb-3">
@@ -839,7 +846,7 @@ Generate 3 different caption variations that:
                               onStyleChange={setSelectedStyle}
                               disabled={isGenerating}
                             />
-                          </div>
+      </div>
 
                           {/* Modern Analysis Toggle */}
                           <div className="mb-3">
@@ -852,8 +859,8 @@ Generate 3 different caption variations that:
                               disabled={isGenerating}
                               className="fw-medium"
                             />
-                          </div>
-
+          </div>
+          
                           {/* Generate Button */}
                           <div className="d-grid">
                             <Button 
@@ -895,7 +902,7 @@ Generate 3 different caption variations that:
                   </Card>
                 </Col>
               </Row>
-            </div>
+          </div>
 
             {/* No bottom input area needed anymore */}
           </div>
