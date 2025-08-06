@@ -70,6 +70,12 @@ function App() {
       '0': '𝟬', '1': '𝟭', '2': '𝟮', '3': '𝟯', '4': '𝟰', '5': '𝟱', '6': '𝟲', '7': '𝟳',
       '8': '𝟴', '9': '𝟵'
     };
+    
+    // Define reverse mapping to normalize incorrect Unicode characters
+    const reverseMap: { [key: string]: string } = {
+      // Fix common Unicode variants that should be normalized
+      '𝗞': 'K', '𝗚': 'G', '𝗿': 'r', '𝗼': 'o', '𝗹': 'l', '𝗹': 'l', '𝗘': 'E', '𝗿': 'r', '𝗼': 'o', '𝗹': 'l', '𝗹': 'l'
+    };
 
     // Define sets of Unicode bold characters for easier checking
     const boldChars = new Set([
@@ -89,8 +95,18 @@ function App() {
       .replace(/\\"/g, '"')            // Convert escaped quotes
       .trim();
     
+    // First, normalize any incorrect Unicode characters
+    let normalizedText = cleanedText;
+    
+    // Fix specific problematic sequences found in the examples
+    normalizedText = normalizedText
+      .replace(/𝗻𝗲𝘁𝘄𝗼𝗿𝗎/g, '𝗻𝗲𝘁𝘄𝗼𝗿𝗸') // Fix "𝗻𝗲𝘁𝘄𝗼𝗿𝗎" to "𝗻𝗲𝘁𝘄𝗼𝗿𝗸"
+      .replace(/𝗰𝗮𝗯𝗹𝗶𝗻𝗚/g, '𝗰𝗮𝗯𝗹𝗶𝗻𝗴') // Fix "𝗰𝗮𝗯𝗹𝗶𝗻𝗚" to "𝗰𝗮𝗯𝗹𝗶𝗻𝗴"
+      .replace(/𝗘𝗿𝗼𝗹𝗹/g, '𝗘𝗻𝗿𝗼𝗹𝗹') // Fix "𝗘𝗿𝗼𝗹𝗹" to "𝗘𝗻𝗿𝗼𝗹𝗹"
+      .replace(/𝗘𝗻𝗿𝗼𝗹𝗹/g, '𝗘𝗻𝗿𝗼𝗹𝗹'); // Ensure "Enroll" is correct
+    
     // Split text into words and process each word
-    return cleanedText.split(/(\s+)/).map(word => {
+    return normalizedText.split(/(\s+)/).map(word => {
       // Skip if it's just whitespace
       if (/^\s+$/.test(word)) return word;
       
@@ -112,6 +128,17 @@ function App() {
       // If word has mixed formatting, convert all characters to bold
       if (hasBold && hasRegular) {
         return word.split('').map(char => boldMap[char] || char).join('');
+      }
+      
+      // If word is all bold but has incorrect Unicode variants, fix them
+      if (hasBold && !hasRegular) {
+        return word.split('').map(char => {
+          // Check if this is a known incorrect variant
+          if (char === '𝗎') return '𝗸'; // Fix incorrect 'k'
+          if (char === '𝗚') return '𝗴'; // Fix incorrect 'g'
+          if (char === '𝗿' && word.includes('𝗿𝗼𝗹𝗹')) return '𝗻'; // Fix 'r' in "Enroll"
+          return char;
+        }).join('');
       }
       
       return word;
@@ -299,9 +326,22 @@ Generate 3 different caption variations that:
   - Do NOT include numbering, bullet points, or extra formatting
   
   EXAMPLE CORRECT BOLD TEXT:
-  ✅ 𝗻𝗲𝘁𝘄𝗼𝗿𝗸 𝗰𝗮𝗯𝗹𝗶𝗻𝗴 (all letters consistent)
-  ✅ 𝗮𝗰𝗰𝗲𝘀𝘀 𝗰𝗼𝗻𝘁𝗿𝗼𝗹 (all letters consistent)
+  ✅ 𝗻𝗲𝘁𝘄𝗼𝗿𝗸 𝗰𝗮𝗯𝗹𝗶𝗻𝗴 (all letters consistent - 'k' is 𝗸, 'g' is 𝗴)
+  ✅ 𝗮𝗰𝗰𝗲𝘀𝘀 𝗰𝗼𝗻𝘁𝗿𝗼𝗹 (all letters consistent - 'l' is 𝗹)
+  ✅ 𝗘𝗻𝗿𝗼𝗹𝗹 (correct 'E' is 𝗘, 'n' is 𝗻, 'r' is 𝗿, 'o' is 𝗼, 'l' is 𝗹)
   ❌ 𝗮𝗰𝗰𝗲𝘀𝘀 𝗰𝗼𝗻𝘁𝗿𝗼L (mixing regular L with bold text)
+  ❌ 𝗻𝗲𝘁𝘄𝗼𝗿𝗎 (wrong 'k' - should be 𝗸 not 𝗎)
+  ❌ 𝗰𝗮𝗯𝗹𝗶𝗻𝗚 (wrong 'g' - should be 𝗴 not 𝗚)
+  ❌ 𝗘𝗿𝗼𝗹𝗹 (missing 'n' - should be 𝗘𝗻𝗿𝗼𝗹𝗹)
+  
+  CRITICAL UNICODE RULES:
+  - Always use lowercase bold Unicode for lowercase letters (𝗮𝗯𝗰...)
+  - Always use uppercase bold Unicode for uppercase letters (𝗔𝗕𝗖...)
+  - Never mix regular and bold characters in the same word
+  - Pay special attention to: k=𝗸, g=𝗴, l=𝗹, n=𝗻, r=𝗿, o=𝗼
+  - "network" = 𝗻𝗲𝘁𝘄𝗼𝗿𝗸 (not 𝗻𝗲𝘁𝘄𝗼𝗿𝗎)
+  - "cabling" = 𝗰𝗮𝗯𝗹𝗶𝗻𝗴 (not 𝗰𝗮𝗯𝗹𝗶𝗻𝗚)
+  - "Enroll" = 𝗘𝗻𝗿𝗼𝗹𝗹 (not 𝗘𝗿𝗼𝗹𝗹)
   
   RESPONSE FORMAT: Return ONLY the JSON array, nothing else.`
           },
